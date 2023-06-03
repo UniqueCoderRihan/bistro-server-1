@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors')
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 // midileWare 
@@ -31,10 +31,38 @@ async function run() {
         await client.connect();
 
         const menuCollection = client.db('bestroboss').collection('menu')
+        const cartCollection = client.db('bestroboss').collection('carts')
 
         app.get('/menu', async (req,res)=>{
             const result = await menuCollection.find().toArray();
             res.send(result) 
+        })
+
+
+        // Carts Collection apis
+        
+        // Carts Get 
+        app.get('/carts',async (req,res)=>{
+            const email = req.query.email;
+            // console.log(email);
+            const query = {email:email};
+            const result = await cartCollection.find(query).toArray();
+            console.log(result);
+            res.send(result)
+        })
+        // Specific Carts Remove using Id
+        app.delete('/carts/:id',async (req,res)=>{
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result = await cartCollection.deleteOne(query);
+            res.send(result)
+        })
+        // Add Carts On Database
+        app.post('/carts',async (req,res)=>{
+            const item = req.body;
+            console.log(item);
+            const result = await cartCollection.insertOne(item);
+            res.send(result)
         })
 
 
