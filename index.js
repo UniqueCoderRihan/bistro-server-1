@@ -56,7 +56,6 @@ async function run() {
         app.post('/jwt', (req, res) => {
             const user = req.body;
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn:'1h'});
-
             res.send(token);
         })
 
@@ -81,6 +80,19 @@ async function run() {
             res.send(result)
         })
 
+        // check admin mail
+        app.get('/users/admin/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+      
+            if (req.decoded.email !== email) {
+              res.send({ admin: false })
+            }
+      
+            const query = { email: email }
+            const user = await usersCollection.findOne(query);
+            const result = { admin: user?.role === 'admin' }
+            res.send(result);
+          })
         // Make admin... PATCH
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
@@ -124,6 +136,8 @@ async function run() {
             console.log(result);
             res.send(result)
         })
+
+        
         // Specific Carts Remove using Id
         app.delete('/carts/:id', async (req, res) => {
             const id = req.params.id;
@@ -131,6 +145,7 @@ async function run() {
             const result = await cartCollection.deleteOne(query);
             res.send(result)
         })
+
         // Add Carts On Database
         app.post('/carts', async (req, res) => {
             const item = req.body;
