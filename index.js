@@ -34,7 +34,14 @@ async function run() {
         const menuCollection = client.db('bestroboss').collection('menu')
         const cartCollection = client.db('bestroboss').collection('carts')
 
-
+        /*
+        *User Management Operations
+        */ 
+        // User Get APis;
+        app.get('/users',async (req,res)=>{
+            const result = await usersCollection.find().toArray();
+            res.send(result);
+        })
         // users add on Database
         app.post('/users',async(req,res)=>{
             const user = req.body;
