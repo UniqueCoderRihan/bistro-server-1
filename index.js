@@ -106,9 +106,19 @@ async function run() {
         // Carts Collection apis
 
         // Carts Get 
-        app.get('/carts', async (req, res) => {
+        app.get('/carts', verifyJWT, async (req, res) => {
             const email = req.query.email;
             // console.log(email);
+
+            if(!email){
+                res.send([]);
+            }
+            // check Verification.>> That's Interesting.
+            const decodedEmail = req.decoded.email;
+            if(email !== decodedEmail){
+                return res.status(403).send({error:true, message: 'Porbidden  Access'})
+            }
+
             const query = { email: email };
             const result = await cartCollection.find(query).toArray();
             console.log(result);
