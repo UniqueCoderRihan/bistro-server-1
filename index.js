@@ -35,70 +35,77 @@ async function run() {
         const menuCollection = client.db('bestroboss').collection('menu')
         const cartCollection = client.db('bestroboss').collection('carts')
 
-        /*
-        *User Management Operations
-        */ 
+        // jwt token create STEP_2 As a My Note;
+        app.post('/jwt', (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, 'secret', { expiresIn:'1h'});
+
+            res.send(token);
+        })
+
+        // *User Management Operations
+        // */ 
         // User Get APis;
-        app.get('/users',async (req,res)=>{
+        app.get('/users', async (req, res) => {
             const result = await usersCollection.find().toArray();
             res.send(result);
         })
         // users add on Database
-        app.post('/users',async(req,res)=>{
+        app.post('/users', async (req, res) => {
             const user = req.body;
-            const query = {email: user.email};
+            const query = { email: user.email };
             const exitingUser = await usersCollection.findOne(query);
-            if(exitingUser){
+            if (exitingUser) {
                 // console.log(exitingUser);
-                return res.send({Message:'User Already exiting on Database'})
+                return res.send({ Message: 'User Already exiting on Database' })
             }
             const result = await usersCollection.insertOne(user);
             // console.log(result);
             res.send(result)
         })
-        
+
         // Make admin... PATCH
-        app.patch('/users/admin/:id',async (req,res)=>{
+        app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
-            const filter = {_id: new ObjectId(id)};
+            const filter = { _id: new ObjectId(id) };
             const updateDoc = {
-                $set:{
+                $set: {
                     role: 'admin'
                 },
             };
-            const result = await usersCollection.updateOne(filter,updateDoc);
+            const result = await usersCollection.updateOne(filter, updateDoc);
             res.send(result)
         })
 
 
 
         // Menu apis 
-        app.get('/menu', async (req,res)=>{
+        app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray();
-            res.send(result) 
+            res.send(result)
         })
 
 
         // Carts Collection apis
-        
+
         // Carts Get 
-        app.get('/carts',async (req,res)=>{
+        app.get('/carts', async (req, res) => {
             const email = req.query.email;
             // console.log(email);
-            const query = {email:email};
+            const query = { email: email };
             const result = await cartCollection.find(query).toArray();
             console.log(result);
             res.send(result)
         })
         // Specific Carts Remove using Id
-        app.delete('/carts/:id',async (req,res)=>{
+        app.delete('/carts/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const result = await cartCollection.deleteOne(query);
             res.send(result)
         })
         // Add Carts On Database
-        app.post('/carts',async (req,res)=>{
+        app.post('/carts', async (req, res) => {
             const item = req.body;
             console.log(item);
             const result = await cartCollection.insertOne(item);
