@@ -55,6 +55,20 @@ async function run() {
             // console.log(result);
             res.send(result)
         })
+        
+        // Make admin... PATCH
+        app.patch('/users/admin/:id',async (req,res)=>{
+            const id = req.params.id;
+            const filter = {_id: new ObjectId(id)};
+            const updateDoc = {
+                $set:{
+                    role: 'admin'
+                },
+            };
+            const result = await usersCollection.updateOne(filter,updateDoc);
+            res.send(result)
+        })
+
 
 
         // Menu apis 
