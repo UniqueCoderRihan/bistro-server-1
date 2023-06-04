@@ -38,7 +38,14 @@ async function run() {
         // users add on Database
         app.post('/users',async(req,res)=>{
             const user = req.body;
+            const query = {email: user.email};
+            const exitingUser = await usersCollection.findOne(query);
+            if(exitingUser){
+                // console.log(exitingUser);
+                return res.send({Message:'User Already exiting on Database'})
+            }
             const result = await usersCollection.insertOne(user);
+            // console.log(result);
             res.send(result)
         })
 
