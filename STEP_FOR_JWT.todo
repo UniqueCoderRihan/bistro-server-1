@@ -3,3 +3,9 @@ require jwt token
 collect secret key [go to terminal and press node secound require('crypto').random(64) thrid added .toString() forth: On the toStr('hex)] . copy the code and paste env local file.
 Create Post api for jwt Web Token.
 **Then Go To Your Client side AuthPRovider and Set Post APi and Set token and local Storge also Remove It.
+
+
+
+** This is For jara admin na tara jeno admin er datagula na deke,jemon allusers,etc***
+
+go to doc for setup useSecure
