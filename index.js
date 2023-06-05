@@ -48,6 +48,17 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
+        // warning:use VerifyJWT before using verifyAdmin
+        const verifyAdmin = async(req,res,next)=>{
+            const email= req.decoded.email;
+            const query = {email: email};
+            const user = await usersCollection.findOne(query);
+            if(user?.role !=='admin'){
+                return res.status(403).send({error:true, message:'forbidden messgae'})
+            }
+            next();
+        }
+
         const usersCollection = client.db('bestroboss').collection('users')
         const menuCollection = client.db('bestroboss').collection('menu')
         const cartCollection = client.db('bestroboss').collection('carts')
@@ -62,7 +73,7 @@ async function run() {
         // *User Management Operations
         // */ 
         // User Get APis;
-        app.get('/users', verifyJWT, async (req, res) => {
+        app.get('/users', verifyJWT,verifyAdmin, async (req, res) => {
             const result = await usersCollection.find().toArray();
             res.send(result);
         })
