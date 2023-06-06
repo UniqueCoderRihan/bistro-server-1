@@ -124,6 +124,13 @@ async function run() {
             const result = await menuCollection.find().toArray();
             res.send(result)
         })
+        // Delete Item
+        app.delete('/menu/:id',verifyJWT,verifyAdmin, async(req,res)=>{
+            const id = req.params.id;
+            const query = {_id : new ObjectId(id)}
+            const result = await menuCollection.deleteOne(query);
+            res.send(result);
+        })
 
         // Add items for showing Menu.
         app.post('/menu',verifyJWT,verifyAdmin, async (req,res)=>{
@@ -131,7 +138,6 @@ async function run() {
             const result = await menuCollection.insertOne(newItem);
             res.send(result);
         })
-
         // Carts Collection apis
 
         // Carts Get 
